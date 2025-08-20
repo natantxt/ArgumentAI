@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArgumentAI - Análise Inteligente de Argumentos</title>
+
+  <!-- Ícones e fonte -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos internos -->
+  <style>
+    /* ================================
+       VARIÁVEIS DE COR E ESTILO GERAL
+    =================================== */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #dbeafe;
+      --secondary: #1e293b;
+      --accent: #f97316;
+      --text: #475569;
+      --light-bg: #f8fafc;
+      --white: #ffffff;
+      --success: #16a34a;
+      --border: #e2e8f0;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --gradient: linear-gradient(135deg, #2563eb, #1e40af);
+    }
+
+    /* Reset e base */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--secondary);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ================================
+       NAVBAR
+    =================================== */
+    .navbar {
+      background-color: var(--white);
+      box-shadow: 0 2px 10px var(--shadow);
+      padding: 1rem 0;
+    }
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo-icon { font-size: 1.8rem; }
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+    .nav-link {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+    .nav-link:hover { background-color: var(--primary-light); }
+    .nav-link.primary {
+      background: var(--gradient);
+      color: var(--white);
+    }
+    .nav-link.primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    /* ================================
+       CONTEÚDO PRINCIPAL
+    =================================== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      flex: 1;
+    }
+    .hero-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 0;
+    }
+    h1 {
+      font-size: 3rem;
+      line-height: 1.2;
+      color: var(--secondary);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+    }
+    .highlight {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-text {
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 2.5rem;
+      max-width: 700px;
+      line-height: 1.7;
+    }
+
+    /* ================================
+       CARDS DE FUNCIONALIDADES
+    =================================== */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+    .feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px var(--shadow);
+      border: 1px solid var(--border);
+      max-width: 250px;
+      transition: transform 0.3s ease;
+    }
+    .feature:hover { transform: translateY(-5px); }
+    .feature-icon {
+      font-size: 2.2rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .feature-title {
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    /* ================================
+       BOTÃO DE AÇÃO
+    =================================== */
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 1.2rem 2.5rem;
+      background: var(--gradient);
+      color: var(--white);
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      margin-top: 1rem;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    .cta-button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    /* ================================
+       RODAPÉ
+    =================================== */
+    footer {
+      background-color: var(--secondary);
+      color: var(--white);
+      padding: 2.5rem 0;
+      text-align: center;
+      margin-top: 4rem;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .footer-text {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 1.5rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .footer-link {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+    .footer-link:hover { opacity: 1; }
+    .copyright {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      margin-top: 1.5rem;
+    }
+
+    /* ================================
+       RESPONSIVIDADE
+    =================================== */
+    @media (max-width: 768px) {
+      .navbar-container { flex-direction: column; gap: 1rem; }
+      .nav-menu { flex-direction: column; width: 100%; text-align: center; }
+      .nav-link { width: 100%; justify-content: center; }
+      h1 { font-size: 2.2rem; }
+      .hero-text { font-size: 1.1rem; }
+      .features { flex-direction: column; align-items: center; }
+      .feature { width: 100%; max-width: 300px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 0 1rem; }
+      h1 { font-size: 1.8rem; }
+      .cta-button { width: 100%; justify-content: center; }
+      .footer-links { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ================================
+     BARRA DE NAVEGAÇÃO
+=================================== -->
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="#" class="logo">
+      <i class="fas fa-pen-fancy logo-icon"></i>
+      <span>ArgumentAI</span>
+    </a>
+
+    <ul class="nav-menu">
+      <li>
+        <a href="correcao.html" class="nav-link">
+          <i class="fas fa-pencil-alt"></i> Área do Aluno
+        </a>
+      </li>
+      <li>
+        <a href="correcaoprofessor.html" class="nav-link primary">
+          <i class="fas fa-chalkboard-teacher"></i> Área do Professor
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================================
+     CONTEÚDO PRINCIPAL
+=================================== -->
+<main>
+  <div class="container">
+    <div class="hero-section">
+      <h1>Análise de Argumentos com <span class="highlight">Inteligência Artificial</span></h1>
+      <p class="hero-text">
+        Receba um feedback detalhado sobre a força dos seus argumentos. 
+        Nossa IA analisa sua tese, repertório e a coerência do seu texto, 
+        oferecendo sugestões para fortalecer sua redação.
+      </p>
+
+      <!-- Blocos de funcionalidades -->
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="feature-title">Análise Instantânea</div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <div class="feature-title">Foco na Competência 3</div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="feature-title">Feedback Estruturado</div>
+        </div>
+      </div>
+
+      <!-- Botão de chamada para ação -->
+      <a href="correcao.html" class="cta-button">
+        <i class="fas fa-rocket"></i> Começar Agora
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- ================================
+     RODAPÉ
+=================================== -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-text">
+      <p>Ferramenta de análise de argumentos com tecnologia de inteligência artificial</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="#" class="footer-link"></a>
+      <a href="#" class="footer-link"></a>
+      <a href="#" class="footer-link"></a>
+      <a href="#" class="footer-link"></a>
+    </div>
+
+    <div class="copyright">
+      <p>© 2025 ArgumentAI - Todos os direitos reservados por alunos do IF Baiano</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

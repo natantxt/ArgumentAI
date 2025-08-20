@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Aluno - ArgumentAI</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- VARIÁVEIS GLOBAIS DE CORES E ESTILOS (THEME) --- */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #dbeafe;
+      --secondary: #1e293b;
+      --accent: #f97316;
+      --text: #475569;
+      --light-bg: #f8fafc;
+      --white: #ffffff;
+      --success: #16a34a;
+      --border: #e2e8f0;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --gradient: linear-gradient(135deg, #2563eb, #1e40af);
+    }
+
+    /* --- RESET E ESTILOS GERAIS DO CORPO DA PÁGINA --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--secondary);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* --- BARRA DE NAVEGAÇÃO (NAVBAR) --- */
+    .navbar {
+      background-color: var(--white);
+      box-shadow: 0 2px 10px var(--shadow);
+      padding: 1rem 0;
+    }
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo-icon {
+      font-size: 1.8rem;
+    }
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+    .nav-link {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+    .nav-link:hover {
+      background-color: var(--primary-light);
+    }
+    .nav-link.primary {
+      background: var(--gradient);
+      color: var(--white);
+    }
+    .nav-link.primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    /* --- CONTAINER PRINCIPAL E CARDS --- */
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      flex: 1; /* Faz o container crescer e ocupar o espaço disponível */
+    }
+    .card {
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px var(--shadow);
+      padding: 2.5rem;
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+    }
+    h1, h2 {
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    h1 {
+      font-size: 2.2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    h1 i {
+      color: var(--primary);
+    }
+
+    /* --- ELEMENTOS DE FORMULÁRIO --- */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    label {
+      font-weight: 500;
+      color: var(--secondary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    label i {
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+    input[type="text"],
+    textarea {
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      background-color: var(--white);
+    }
+    textarea {
+      min-height: 300px;
+      resize: vertical; /* Permite que o usuário redimensione apenas na vertical */
+      line-height: 1.7;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    
+    /* --- BOTÕES --- */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--gradient);
+    }
+    .btn-primary:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background-color: var(--secondary);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #374151;
+      transform: translateY(-2px);
+    }
+
+    /* --- INDICADOR DE CARREGAMENTO (LOADING) E RESULTADOS --- */
+    #loading {
+      display: none; /* Começa escondido */
+      padding: 1.5rem 0;
+      text-align: center;
+      color: var(--primary);
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+    .loading-spinner {
+      border: 3px solid var(--primary-light);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    .resultado {
+      margin-top: 2rem;
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 4px 6px var(--shadow);
+      animation: fadeIn 0.5s ease;
+    }
+    #resultado {
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      overflow-x: auto;
+      white-space: pre-wrap; /* Mantém as quebras de linha e espaços do texto */
+      word-break: break-word; /* Quebra palavras longas para não estourar o container */
+      font-size: 1rem;
+      line-height: 1.7;
+      background-color: var(--light-bg);
+      border: 1px solid var(--border);
+    }
+    .nota-final {
+      background: var(--gradient);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      margin: 2rem 0;
+      font-weight: 600;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    .dica-box {
+      background-color: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .dica-box i {
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin-top: 0.2rem;
+    }
+
+    /* --- ANIMAÇÕES (KEYFRAMES) --- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* --- RODAPÉ --- */
+    footer {
+      background-color: var(--secondary);
+      color: var(--white);
+      padding: 2rem 0;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* --- MEDIA QUERIES PARA RESPONSIVIDADE --- */
+    /* Para tablets e telas menores */
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .nav-menu {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+      }
+      .nav-link {
+        width: 100%;
+        justify-content: center;
+      }
+      .card {
+        padding: 1.5rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .button-group {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Para celulares */
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 1rem;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-pen-fancy logo-icon"></i>
+        <span>ArgumentAI</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="correcao.html" class="nav-link primary"><i class="fas fa-pencil-alt"></i> Área do Aluno</a></li>
+        <li><a href="correcaoprofessor.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Área do Professor</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h1><i class="fas fa-microscope"></i> Análise de Argumentos</h1>
+
+      <div class="form-group">
+        <div class="form-field">
+          <label for="tema"><i class="fas fa-book-open"></i> Tema da Redação:</label>
+          <input type="text" id="tema" required placeholder="Digite o tema da redação (ex: 'Desafios para a educação inclusiva no Brasil')">
+        </div>
+        <div class="form-field">
+          <label for="redacao"><i class="fas fa-edit"></i> Sua Redação:</label>
+          <textarea id="redacao" required placeholder="Digite a argumentação da sua redação aqui..."></textarea>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="analiseBtn" class="btn-primary" onclick="corretor.analisarArgumentos()">
+          <i class="fas fa-magic"></i> Analisar Argumentos
+        </button>
+        <button id="pdfBtn" class="btn-secondary" onclick="corretor.baixarPDF()">
+          <i class="fas fa-file-pdf"></i> Baixar PDF
+        </button>
+      </div>
+      
+      <div id="loading">
+        <div class="loading-spinner"></div>
+        Analisando a argumentação...
+      </div>
+
+      <div id="resultado-container" class="resultado" style="display:none;">
+        <h2><i class="fas fa-clipboard-check"></i> Resultado da Análise Argumentativa</h2>
+        <div class="nota-final">
+          <i class="fas fa-star"></i> Força Argumentativa: <span id="nota">0</span>/200
+        </div>
+        <div class="dica-box">
+          <i class="fas fa-lightbulb"></i>
+          <div>
+            <strong>Dica do Analista:</strong> Confira abaixo a análise detalhada da sua tese, argumentos e repertório, com sugestões para fortalecê-los.
+          </div>
+        </div>
+        <pre id="resultado">Aguardando análise...</pre>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <p>© 2025 ArgumentAI - Todos os direitos reservados por alunos do IF Baiano</p>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * Classe ArgumentAI
+     * Gerencia toda a lógica da aplicação, desde a interação com o usuário
+     * até a comunicação com a API e a geração de PDF.
+     */
+    class ArgumentAI {
+      constructor() {
+        console.log("ArgumentAI iniciada.");
+      }
+
+      /**
+       * Limpa e formata a resposta da API para melhor legibilidade.
+       * Remove marcações como '**' e '*' e adiciona quebras de linha estratégicas.
+       * @param {string} resposta - O texto bruto retornado pela API.
+       * @returns {string} O texto formatado.
+       */
+      formatarResposta(resposta) {
+        let textoFormatado = resposta;
+        // Remove marcações de negrito e itálico do markdown
+        textoFormatado = textoFormatado.replace(/\*\*/g, '').replace(/\*/g, '');
+        // Adiciona quebras de linha antes dos títulos principais
+        textoFormatado = textoFormatado.replace(/(Tese Principal:|Análise do Argumento \d:|Avaliação Geral da Argumentação:|Nota para a Força Argumentativa:)/g, '\n\n$1');
+        // Adiciona quebras de linha antes dos subtítulos
+        textoFormatado = textoFormatado.replace(/(Argumento:|Repertório\/Evidência:|Análise Crítica:|Sugestão de Melhoria:)/g, '\n$1');
+        // Remove quebras de linha múltiplas e excessivas
+        textoFormatado = textoFormatado.replace(/\n{3,}/g, '\n\n');
+        return textoFormatado.trim();
+      }
+
+      /**
+       * Função principal que orquestra a análise dos argumentos.
+       * É uma função assíncrona para poder aguardar a resposta da API.
+       */
+      async analisarArgumentos() {
+        // Pega os elementos da UI
+        const tema = document.getElementById("tema").value.trim();
+        const redacao = document.getElementById("redacao").value.trim();
+        const resultadoDiv = document.getElementById("resultado");
+        const resultadoContainer = document.getElementById("resultado-container");
+        const notaSpan = document.getElementById("nota");
+
+        // Validação simples para garantir que os campos não estão vazios
+        if (!tema || !redacao) {
+          alert("Por favor, preencha o tema e a redação.");
+          return;
+        }
+
+        this.toggleLoading(true); // Ativa o estado de loading na UI
+        resultadoContainer.style.display = "none";
+        resultadoDiv.innerText = "Analisando a estrutura argumentativa, aguarde...";
+        
+        try {
+          const prompt = this.criarPrompt(tema, redacao); // Monta o prompt
+          const respostaBruta = await this.enviarParaAPI(prompt); // Envia para a API e aguarda
+          const respostaFormatada = this.formatarResposta(respostaBruta); // Formata a resposta
+          
+          resultadoDiv.innerText = respostaFormatada || "Não houve resposta da IA.";
+          
+          // Extrai a nota da resposta formatada usando uma expressão regular
+          const notaMatch = respostaFormatada.match(/Nota para a Força Argumentativa:\s*(\d+)/);
+          notaSpan.innerText = notaMatch ? notaMatch[1] : "N/A";
+
+          resultadoContainer.style.display = "block"; // Exibe o container de resultados
+        } catch (erro) {
+          resultadoDiv.innerText = "Erro ao processar a análise: " + erro.message;
+          resultadoContainer.style.display = "block"; // Exibe o container para mostrar o erro
+        } finally {
+          this.toggleLoading(false); // Desativa o estado de loading, independente de sucesso ou erro
+        }
+      }
+
+      /**
+       * Cria o prompt detalhado que será enviado para a API de IA.
+       * Este é o "cérebro" da aplicação, onde as instruções para a IA são definidas.
+       * @param {string} tema - O tema da redação informado pelo usuário.
+       * @param {string} redacao - O texto da redação informado pelo usuário.
+       * @returns {string} O prompt completo e estruturado.
+       */
+      criarPrompt(tema, redacao) {
+        return `Você é um especialista em lógica e estrutura argumentativa, focado em analisar a qualidade dos argumentos em redações do ENEM. Ignore erros gramaticais e foque exclusivamente na construção argumentativa (Competência 3). Sua tarefa é dissecar a argumentação da redação do usuário sobre o tema "${tema}". Siga ESTRITAMENTE a estrutura de resposta abaixo:\n\n1. **Tese Principal:** Identifique e transcreva a tese central defendida na redação.\n\n2. **Análise do Argumento 1:**\n    * **Argumento:** Descreva o primeiro argumento principal usado para defender a tese.\n    * **Repertório/Evidência:** Cite o repertório sociocultural (filme, livro, fato histórico, etc.) usado para embasar este argumento.\n    * **Análise Crítica:** Avalie a força e a pertinência do argumento e do repertório. O argumento é claro? O repertório está bem conectado e desenvolve o argumento? É previsível ou autoral?\n    * **Sugestão de Melhoria:** Dê uma sugestão específica para fortalecer este argumento ou a conexão com o repertório.\n\n3. **Análise do Argumento 2:**\n    * **Argumento:** Descreva o segundo argumento principal.\n    * **Repertório/Evidência:** Cite o repertório sociocultural usado.\n    * **Análise Crítica:** Faça a mesma análise crítica do argumento 2.\n    * **Sugestão de Melhoria:** Dê uma sugestão específica para este segundo argumento.\n\n4. **Avaliação Geral da Argumentação:** Faça um parágrafo final comentando sobre a coerência geral, a progressão das ideias e a capacidade de persuasão do texto.\n\n5. **Nota para a Força Argumentativa:** Atribua uma nota de 0 a 200, baseada exclusivamente na seleção, relação e organização das informações para defender a tese (Critérios da Competência 3 do ENEM).\n\n---\nRedação do Usuário:\n${redacao}`;
+      }
+
+      /**
+       * Envia o prompt para a API usando fetch e retorna a resposta.
+       * @param {string} prompt - O prompt a ser enviado.
+       * @returns {Promise<string>} O conteúdo da mensagem da API.
+       */
+      async enviarParaAPI(prompt) {
+        const urlDaApi = "https://argumentai.vercel.app/api/chat";
+        const resposta = await fetch(urlDaApi, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: [{ role: "user", content: prompt }] })
+        });
+        if (!resposta.ok) {
+          const erro = await resposta.json();
+          throw new Error(erro.detalhes || "Erro na comunicação com a API");
+        }
+        const dados = await resposta.json();
+        return dados.choices?.[0]?.message?.content;
+      }
+
+      /**
+       * Controla a exibição do spinner de carregamento e desativa/ativa os botões.
+       * @param {boolean} loading - True para mostrar o loading, false para esconder.
+       */
+      toggleLoading(loading) {
+        const loadingElement = document.getElementById("loading");
+        const analiseBtn = document.getElementById("analiseBtn");
+        const pdfBtn = document.getElementById("pdfBtn");
+        
+        if (loadingElement) loadingElement.style.display = loading ? "block" : "none";
+        if (analiseBtn) analiseBtn.disabled = loading;
+        if (pdfBtn) pdfBtn.disabled = loading;
+      }
+
+      /**
+       * Gera e baixa um arquivo PDF com o resultado da análise.
+       */
+      baixarPDF() {
+        const resultado = document.getElementById("resultado").innerText.trim();
+        const tema = document.getElementById("tema").value.trim();
+
+        // Valida se existe um resultado válido para ser exportado
+        if (!resultado || resultado.includes("aguarde") || resultado.includes("Analisando")) {
+          alert("Nenhuma análise disponível para exportar.");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // --- Lógica de Layout do PDF ---
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 15;
+        const maxWidth = pageWidth - margin * 2;
+        const lineHeight = 7;
+        let y = margin; // Posição vertical inicial
+
+        // Cabeçalho do PDF
+        doc.setFontSize(14);
+        doc.text("Análise da Estrutura Argumentativa - ArgumentAI", margin, y);
+        y += lineHeight * 1.5;
+
+        doc.setFontSize(10);
+        const hoje = new Date().toLocaleDateString("pt-BR");
+        doc.text(`Data: ${hoje} | Tema: ${tema}`, margin, y);
+        y += lineHeight * 2;
+        
+        // Conteúdo Principal (Resultado da Análise)
+        doc.setFontSize(12);
+        const linhas = doc.splitTextToSize(resultado, maxWidth);
+        
+        // Itera sobre cada linha para adicioná-la ao PDF, cuidando da quebra de página
+        linhas.forEach(linha => {
+          // Se a próxima linha ultrapassar a margem inferior, cria uma nova página
+          if (y + lineHeight > pageHeight - margin) {
+            doc.addPage();
+            y = margin; // Reseta a posição vertical para o topo
+          }
+          doc.text(linha, margin, y);
+          y += lineHeight; // Incrementa a posição vertical
+        });
+
+        // Salva o arquivo
+        doc.save(`Analise_ArgumentAI.pdf`);
+      }
+    }
+
+    // --- INICIALIZAÇÃO DA APLICAÇÃO ---
+    // Aguarda o DOM (a estrutura da página) ser completamente carregado para rodar o script
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cria uma instância global da classe para ser acessada pelos botões no HTML
+      window.corretor = new ArgumentAI();
+    });
+  </script>
+
+</body>
+</html>
